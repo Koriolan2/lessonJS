@@ -98,3 +98,13 @@ console.log(appData.getStatusIncome());
 for (let key in appData) {
     console.log('наша программа включает данные: ' + key + ' - ' + appData[key]);
 }
+
+
+const capitalize = function(str) {
+    return str.replace(/(^|\s)\S/g, function(a) {return a.toUpperCase()})
+}
+console.log(capitalize(appData.addExpenses.join(', ')));
+// for (let key in appData.addExpenses) {
+//     console.log(appData.addExpenses[key]);
+// }
+// console.log(appData.addExpenses);
