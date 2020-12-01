@@ -104,3 +104,19 @@ const capitalize = function(str) {
     return str.replace(/(^|\s)\S/g, function(a) {return a.toUpperCase()})
 }
 console.log(capitalize(appData.addExpenses.join(', ')));
+
+const d = document;
+const startButton = d.getElementById('start'),
+      buttonPlus1 = d.getElementsByTagName('button')[0],
+      buttonPlus2 = d.getElementsByTagName('button')[1], 
+      depositCheckmark = d.querySelector('#deposit-check'),
+      additionalIncomeItem = d.querySelectorAll('.additional_income-item'),
+      values = d.getElementsByClassName('result-total'),
+      salaryAmount = d.querySelector('.salary-amount'),
+      incomeTitle = d.querySelector('.income-title'),
+      incomeAmount = d.querySelector('.income-amount'),
+      expensesTitle = d.querySelector('.expenses-title'),
+      expensesAmount = d.querySelector('.expenses-amount'),
+      targetAmount = d.querySelector('.expenses-amount'),
+      periodSelect = d.querySelector('.period-select');
+     
