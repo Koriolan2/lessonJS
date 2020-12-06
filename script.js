@@ -1,7 +1,7 @@
 'use strict'
 
 const d = document;
-const start = d.getElementById('start'),
+let start = d.getElementById('start'),
       btnPlus = d.getElementsByTagName('button'),
       incomePlus = btnPlus[0],
       expensesPlus = btnPlus[1],
@@ -20,6 +20,7 @@ const start = d.getElementById('start'),
       expensesTitle = d.querySelector('.expenses-title'),
       expensesItems = d.querySelectorAll('.expenses-items'),
       periodSelect = d.querySelector('.period-select'),
+      periodAmount = d.querySelector('.period-amount'),
       additionalExpensesItem = d.querySelector('.additional_expenses-item'),
       additionalIncomeValue = d.querySelector('.additional_income-value'),
       targetAmount = d.querySelector('.target-amount'),
@@ -90,8 +91,6 @@ let appData = {
         appData.showResult();
     },
     addExpensesBlock: function () {
-        let expensesItems = document.querySelectorAll('.expenses-items');
-        console.log(expensesItems.parentNode);
         let cloneExpensesItem = expensesItems[0].cloneNode(true);
         expensesItems[0].parentNode.insertBefore(cloneExpensesItem, expensesPlus);
         expensesItems = d.querySelectorAll('.expenses-items');
@@ -99,8 +98,16 @@ let appData = {
             expensesPlus.style.display = 'none';
         }
     },
+    addIncomeBlock: function () {
+        let cloneIncomeItem =  incomeItem[0].cloneNode(true);
+        incomeItem[0].parentNode.insertBefore(cloneIncomeItem, incomePlus);
+        incomeItem = d.querySelectorAll('.income-items');
+        if(incomeItem.length === 3) {
+            incomePlus.style.display = 'none';
+        }
+    },
     getExpenses: function () {
-        expensesItems.forEach(function(item) {
+        expensesItems.forEach(function (item) {
             let itemExpenses = item.querySelector('.expenses-title').value;
             let cashExpenses = item.querySelector('.expenses-amount').value;
             if(itemExpenses !== '' && cashExpenses !== '') {
@@ -109,24 +116,25 @@ let appData = {
         });
     },
     getIncome: function () {
-        if (confirm('Есть ли у вас дополнительный источник заработка?')) {
-            let itemIncome = prompt('Какой у вас дополнительный заработок?', 'Такусую');
-            let cashIncome = prompt('Сколько в месяц вы на этом зарабатываете?', 10000);
-            appData.income[itemIncome] = cashIncome;
-        } 
-
-        for (let key in appData.income) {
-            appData.incomeMonth += +appData.income[key];
-        }
+        incomeItem.forEach(function (item) {
+            let itemIncome = item.querySelector('.income-title').value;
+            let cashIncome = item.querySelector('.income-amount').value;
+            if (itemIncome !== '' && cashIncome != '') {
+                appData.income[itemIncome] = +cashIncome;
+                appData.incomeMonth += +cashIncome;
+            }
+        });
     },
     showResult: function () {
         budgetMonthValue.value = appData.budgetMonth;
-        budgetDayValue.value = appData.budgetDay;
+        budgetDayValue.value = Math.ceil(appData.budgetDay);
         expensesMonthValue.value = appData.expensesMonth;
         additionalExpensesValue.value = appData.addExpenses.join(', ');
         additionalIncomeValue.value = appData.addIncome.join(', ');
         targetMonthValue.value = Math.ceil(appData.getTargetMonth());
         incomePeriodValue.value = appData.calcPeriod();
+
+        
     },
     getAddExpenses: function () {
         let addExpenses = additionalExpensesItem.value.split(',');
@@ -153,10 +161,11 @@ let appData = {
 const capitalize = function(str) {
     return str.replace(/(^|\s)\S/g, function(a) {return a.toUpperCase()})
 }
-console.log(capitalize(appData.addExpenses.join(', ')));
-
      
 start.addEventListener('click', appData.start);
 expensesPlus.addEventListener('click', appData.addExpensesBlock);
+incomePlus.addEventListener('click', appData.addIncomeBlock);
+periodSelect.addEventListener('input',function () {
+    periodAmount.textContent = periodSelect.value;
+})
 
-console.log(additionalExpensesValue);
