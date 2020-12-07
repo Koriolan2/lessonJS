@@ -134,6 +134,9 @@ let appData = {
         targetMonthValue.value = Math.ceil(appData.getTargetMonth());
         incomePeriodValue.value = appData.calcPeriod();
 
+        periodSelect.addEventListener('change', function(){
+            incomePeriodValue.value = appData.calcPeriod(); 
+        });
         
     },
     getAddExpenses: function () {
@@ -161,8 +164,16 @@ let appData = {
 const capitalize = function(str) {
     return str.replace(/(^|\s)\S/g, function(a) {return a.toUpperCase()})
 }
-     
-start.addEventListener('click', appData.start);
+
+salaryAmount.addEventListener('change', function() {
+    if (salaryAmount.value !== ''){
+        start.addEventListener('click', appData.start);
+    }
+    else {
+        start.removeEventListener('click');
+    }
+});
+
 expensesPlus.addEventListener('click', appData.addExpensesBlock);
 incomePlus.addEventListener('click', appData.addIncomeBlock);
 periodSelect.addEventListener('input',function () {
