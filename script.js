@@ -2,6 +2,7 @@
 
 const d = document;
 let start = d.getElementById('start'),
+      cancel = d.getElementById('cancel'),
       btnPlus = d.getElementsByTagName('button'),
       incomePlus = btnPlus[0],
       expensesPlus = btnPlus[1],
@@ -26,7 +27,8 @@ let start = d.getElementById('start'),
       targetAmount = d.querySelector('.target-amount'),
       targetMonthValue = d.querySelector('.target_month-value'),
       incomePeriodValue = d.querySelector('.income_period-value'),
-      incomeItem = d.querySelectorAll('.income-items');
+      incomeItem = d.querySelectorAll('.income-items'),
+      data = d.querySelectorAll('.data input[type=text]');
 
 let appData = {
     budget:0,
@@ -75,12 +77,12 @@ let appData = {
         return appData.budgetMonth * periodSelect.value;
     },
     start:function () {
+        console.log(this);
         if (salaryAmount.value === ''){
             alert ('Ошибка! Поле "Месячный доход" должно быть заполнено!');
             return;
         }
         appData.budget = +salaryAmount.value;
-        console.log('salaryAmount.value: ', salaryAmount.value);
         appData.getExpenses();
         appData.getIncome();
         appData.getExpensesMonth();
@@ -89,6 +91,18 @@ let appData = {
 
         appData.getBudget();
         appData.showResult();
+        appData.blockFields();
+        appData.replaceButton();
+       
+    },
+    blockFields: function () {
+        data.forEach(function (item) {
+                item.setAttribute('disabled','disabled');
+        });
+    },
+    replaceButton: function () {
+        start.style.display = 'none';
+        cancel.style.display = 'block';
     },
     addExpensesBlock: function () {
         let cloneExpensesItem = expensesItems[0].cloneNode(true);
@@ -126,26 +140,29 @@ let appData = {
         });
     },
     showResult: function () {
-        budgetMonthValue.value = appData.budgetMonth;
+        budgetMonthValue.value = this.budgetMonth;
         budgetDayValue.value = Math.ceil(appData.budgetDay);
-        expensesMonthValue.value = appData.expensesMonth;
-        additionalExpensesValue.value = appData.addExpenses.join(', ');
-        additionalIncomeValue.value = appData.addIncome.join(', ');
-        targetMonthValue.value = Math.ceil(appData.getTargetMonth());
-        incomePeriodValue.value = appData.calcPeriod();
+        expensesMonthValue.value = this.expensesMonth;
+        additionalExpensesValue.value = this.addExpenses.join(', ');
+        additionalIncomeValue.value = this.addIncome.join(', ');
+        targetMonthValue.value = Math.ceil(this.getTargetMonth());
+        incomePeriodValue.value = this.calcPeriod();
 
+        periodSelect.addEventListener('input', function() {
+            incomePeriodValue.value = appData.calcPeriod();
+        });
+        
         
     },
     getAddExpenses: function () {
         let addExpenses = additionalExpensesItem.value.split(',');
 
-        console.log(addExpenses);
         addExpenses.forEach(function(item){
             item = item.trim();
             if (item !== '') {
                 appData.addExpenses.push(item);
             }
-            console.log(appData.addExpenses);
+            
         })
     },
     getAddIncome: function () {
@@ -154,9 +171,12 @@ let appData = {
             if (itemValue != '') {
                 appData.addIncome.push(itemValue);
             }
+            
         });
     }
 };
+
+appData.start.bind(appData);
 
 const capitalize = function(str) {
     return str.replace(/(^|\s)\S/g, function(a) {return a.toUpperCase()})
