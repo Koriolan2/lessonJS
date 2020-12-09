@@ -95,9 +95,27 @@ let appData = {
         appData.replaceButton();
        
     },
+    reset: function () {
+
+        start.style.display = 'block';
+        cancel.style.display = 'none';
+        let allInputText = d.querySelectorAll('input[type=text]');
+
+        allInputText.forEach(function (item) {
+            item.value = '';
+        });
+
+        appData.unblockFields();
+
+    },
     blockFields: function () {
         data.forEach(function (item) {
                 item.setAttribute('disabled','disabled');
+        });
+    },
+    unblockFields: function() {
+        data.forEach(function (item) {
+            item.removeAttribute('disabled');
         });
     },
     replaceButton: function () {
@@ -187,5 +205,7 @@ expensesPlus.addEventListener('click', appData.addExpensesBlock);
 incomePlus.addEventListener('click', appData.addIncomeBlock);
 periodSelect.addEventListener('input',function () {
     periodAmount.textContent = periodSelect.value;
-})
+});
+cancel.addEventListener('click', appData.reset);
+
 
