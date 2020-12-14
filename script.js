@@ -20,7 +20,11 @@ let   start = d.getElementById('start'),
       periodSelect = d. querySelector('.period-select'),
       periodAmount = d.querySelector('.period-amount'),
       budgetMonthValue = d.querySelector('.result-budget_month input'),
-      incomeItems = d.querySelectorAll('.income-items');  
+      incomeItems = d.querySelectorAll('.income-items'),
+      depositCheck = d.getElementById('deposit-check'),
+      depositBank = d.querySelector('.deposit-bank'),
+      depositAmount = d.querySelector('.deposit-amount'),
+      depositPercent = d.querySelector('.deposit-percent');  
 
 class AppData {      
     constructor () {
@@ -64,7 +68,7 @@ class AppData {
         this.getExpensesMonth();
         this.getAddExpenses();
         this.getAddIncome();
-
+        this.getInfoDeposit();
         this.getBudget();
         this.getInfoDeposit();
         this.getStatusIncome();
@@ -154,15 +158,10 @@ class AppData {
     };
 
     getInfoDeposit = function () {
-        if (this.deposit) {
-            do {
-                this.percentDeposit = prompt('Какой годовой процент?', '10');
-            } while (isNaN(this.percentDeposit) || this.percentDeposit ==='');
-            do {
-                this.moneyDeposit = prompt('Какая сумма заложена',10000);
-            } while (isNaN(this.moneyDeposit) || this.moneyDeposit === '' || this.moneyDeposit === ' ' ||
-            this.moneyDeposit === null)
-            }
+       if (this.deposit) {
+           this.percentDeposit = depositPercent.value;
+           this.moneyDeposit = depositAmount.value;
+       }
     };
 
     getExpensesMonth = function () {
@@ -172,7 +171,8 @@ class AppData {
     };
 
     getBudget = function () {
-        this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth;
+        const monthDeposit = this.moneyDeposit * (this.percentDeposit / 100);
+        this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth + monthDeposit;
         this.budgetDay = Math.floor(this.budgetMonth / 30);
     };
 
@@ -235,6 +235,43 @@ class AppData {
             }
         });
     };
+    
+    percentValidate = function () {
+        if (depositPercent < 0 || depositPercent > 100) {
+            alert('Введите правильное значение процента депозита');
+        }
+    };
+
+    changePercent = function () {
+        const valueSelect = this.value;
+        if (valueSelect === 'other') {
+            depositPercent.style.display = 'inline-block';
+
+            depositPercent.addEventListener('input', this.percentValidate);
+        } else {
+            depositPercent.style.display = 'none';
+            depositPercent.value = valueSelect; 
+            depositPercent.removeEventListener('input', this.percentValidate);
+        }
+
+
+    };
+
+    depositHandler = function () {
+        if(depositCheck.checked) {
+            depositBank.style.display = 'inline-block';
+            depositAmount.style.display = 'inline-block';
+            this.deposit = true;
+            depositBank.addEventListener('change', this.changePercent);
+        } else {
+            depositBank.style.display = 'none';
+            depositAmount.style.display = 'none';
+            depositBank.value = '';
+            depositAmount.value = '';
+            this.deposit = false;
+            depositBank.removeEventListener('change', this.changePercent);
+        }
+    };
 
     eventsListeners = function () {
         start.addEventListener('click', this.start.bind(this));
@@ -246,6 +283,7 @@ class AppData {
         periodSelect.addEventListener('change',() => {
             periodAmount.innerHTML = periodSelect.value;
         });
+        depositCheck.addEventListener('change', this.depositHandler.bind(this));
 
         let addExp = [];
         for (let i = 0; i< this.addExpenses.length; i++) {
